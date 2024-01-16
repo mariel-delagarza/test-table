@@ -1,0 +1,140 @@
+@use "../abstracts/" as *;
+
+.options {
+  background-color: $color-off-white;
+
+  &__container {
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+    padding-top: 8px;
+    overflow-x: scroll;
+
+    &--sticky {
+      position: sticky;
+      top: 0;
+      z-index: 11;
+    }
+
+    &::-webkit-scrollbar {
+      width: rem(10);
+      height: rem(10);
+    }
+
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 9px $color-background-white;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 9px $color-dark-yellow;
+    }
+  }
+
+  &__navigation {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: rem(16);
+
+    &-inner {
+      display: flex;
+      align-items: center;
+
+      button + button {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &__header {
+    position: relative;
+    display: flex;
+    text-align: left;
+    margin-top: rem(32);
+  }
+
+  &__btn {
+    display: flex;
+    color: $color-text-gray-300;
+    @extend %text-style-ui-2;
+
+    &--tab {
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      text-align: left;
+      inline-size: min-content;
+      padding-top: rem(4);
+      padding-bottom: rem(16);
+      padding-left: rem(8);
+      padding-right: rem(4);
+      border-bottom: 3px solid $color-off-white;
+      margin-right: rem(16);
+      color: $color-main-red;
+
+      .options__count {
+        color: $color-main-red;
+        background-color: $color-sunset;
+        transition:
+          background-color 0.3s ease-in-out,
+          color 0.3s ease-in-out;
+      }
+    }
+
+    &--tab:hover {
+      color: $color-light-red;
+      border-bottom: 3px solid $color-light-yellow;
+
+      .options__count {
+        color: $color-main-red;
+        background-color: $color-light-yellow;
+        transition:
+          background-color 0.3s ease-in-out,
+          color 0.3s ease-in-out;
+      }
+    }
+
+    &--tab--active {
+      border-bottom: 3px solid $color-main-red;
+      transition: border-bottom 0.3s ease-in-out;
+
+      .options__count {
+        background-color: $color-dark-red;
+        color: $color-off-white;
+      }
+    }
+
+    &--tab:focus {
+      outline: 3px solid $color-focus-outline;
+    }
+  }
+
+  &__table-total-entries {
+    color: $color-placeholder;
+    margin-right: rem(16);
+    @extend %text-style-ui-5;
+  }
+
+  @include breakpoint("medium") {
+    &__btn--tab {
+      inline-size: initial;
+    }
+  }
+
+  &__count {
+    background-color: $color-background-gray-200;
+    border-radius: rem(19);
+    color: $color-text-gray-300;
+    @extend %text-style-ui-5;
+    padding: rem(3) rem(8) rem(4);
+    margin-left: rem(12);
+    pointer-events: none;
+
+    &--active {
+      color: $color-text-white;
+      background-color: $color-text-gray-400;
+      transition:
+        background-color 0.3s ease-in-out,
+        color 0.3s ease-in-out;
+    }
+  }
+}

@@ -1,0 +1,250 @@
+@use "../abstracts/" as *;
+
+main {
+  margin: 0 auto;
+}
+
+.intro-content {
+  padding-top: rem(132);
+  padding-left: 0;
+  padding-right: 0;
+  max-width: $size__intro-content-wide-max-width;
+  text-align: center;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-left: 0;
+
+    @include breakpoint("medium") {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+  }
+
+  &__flex-left {
+    flex: 1;
+    padding: 20px;
+
+    @include breakpoint("medium") {
+      flex: 2;
+    }
+  }
+
+  &__flex-right {
+    flex: 1;
+  }
+
+  &__overline {
+    &--small {
+      @extend %text-style-ui-5-caps;
+      color: $color-off-white;
+      margin-bottom: rem(4);
+    }
+
+    &--regular {
+      @extend %text-style-ui-4-caps;
+      color: $color-off-white;
+
+      &::after {
+        content: "";
+        display: block;
+        border-bottom: 2px solid $color-off-white;
+        width: 23px;
+        height: 2px;
+        margin: 0 auto;
+        margin-top: rem(8);
+      }
+    }
+  }
+
+  &__title {
+    margin-top: rem(12);
+    margin-bottom: rem(48);
+
+    @extend %text-style-heading-1;
+    color: $color-off-white;
+    text-align: center;
+  }
+
+  &__introduction {
+    margin-bottom: rem(16);
+    max-width: $size__content-max-width;
+    @extend %text-style-paragraph-1;
+    color: $color-off-white;
+  }
+
+  &__more {
+    &__icon-container {
+      position: relative;
+      margin-right: rem(4);
+      top: rem(2);
+    }
+  }
+
+  &__link {
+    color: $color-light-yellow;
+    text-decoration: none;
+    transition: $transition__link;
+
+    &--more {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      @extend %text-style-ui-3;
+    }
+
+    .intro-content__more__icon-container {
+      fill: $color-light-yellow;
+      transition: $transition__link;
+    }
+
+    &:hover {
+      color: $color-dark-yellow;
+
+      .intro-content__more__icon-container {
+        fill: $color-dark-yellow;
+        transition: $transition__link;
+      }
+    }
+
+    &:visited {
+      color: $color-light-yellow;
+
+      .intro-content__more__icon-container {
+        fill: $color-light-yellow;
+      }
+    }
+
+    &:focus {
+      outline-color: $color-focus-outline;
+      color: $color-dark-yellow;
+      .intro-content__more__icon-container {
+        fill: $color-dark-yellow;
+      }
+    }
+  }
+
+  &__graphs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    padding-top: rem(56);
+    padding-bottom: 10rem;
+    justify-content: center;
+    max-width: $size__content-max-width;
+
+    @include breakpoint("medium") {
+      flex-direction: row;
+      max-width: $size__intro-content-wide-max-width;
+    }
+  }
+}
+
+.intro-bar {
+  width: 100%;
+
+  &:first-child {
+    @include breakpoint("medium") {
+      margin-right: 3rem;
+    }
+  }
+
+  &:last-child {
+    margin-top: 2rem;
+    @include breakpoint("medium") {
+      margin-top: 0;
+      margin-left: 3rem;
+    }
+  }
+
+  &__title {
+    margin-bottom: rem(10);
+    @extend %text-style-ui-5-bold-caps;
+  }
+
+  &__content {
+    display: flex;
+  }
+
+  &__column {
+    &--labels div,
+    &--bars .bar {
+      height: rem(24);
+      margin-bottom: rem(12);
+      @extend %text-style-ui-3;
+      line-height: 1;
+    }
+
+    &--labels {
+      width: 40%;
+      margin-right: 2rem;
+
+      @include breakpoint("small") {
+        width: rem(200);
+      }
+
+      div {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    &--bars {
+      position: relative;
+      display: block;
+      flex-grow: 2;
+      border-right: 1px solid $color-borders-gray-300;
+      border-left: 1px solid $color-borders-gray-300;
+
+      .bar {
+        display: flex;
+        align-items: center;
+        background: $color-background-gray-300;
+        @extend %text-style-ui-4;
+      }
+
+      span {
+        height: 100%;
+        background: $color-text-gray-500;
+        display: inline-block;
+        margin-right: rem(5);
+      }
+
+      &:before,
+      &:after {
+        display: block;
+        position: absolute;
+        top: 100%;
+        width: 20px;
+        color: $color-text-gray-200;
+        text-align: center;
+        @extend %text-style-ui-5;
+      }
+
+      &:before {
+        content: "0";
+        left: -10px;
+      }
+
+      &:after {
+        content: attr(data-total-entries);
+        right: -10px;
+      }
+    }
+  }
+}
+
+.wrapper {
+  background: url(https://res.cloudinary.com/csisideaslab/image/upload/v1696427112/poni/PONI-Table-Header1-Temp_2.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: calc(100vh - 40px);
+
+  @include breakpoint("medium") {
+    background-position: 60% 10%;
+  }
+}

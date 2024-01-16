@@ -1,0 +1,28 @@
+@use "../abstracts/" as *;
+
+.btn {
+  padding: 6px 8px;
+
+  &:hover {
+    color: $color-text-gray-400;
+    background-color: $color-antique-white;
+  }
+
+  &--scroll {
+    color: #7e8694;
+    background-color: $color-sunset;
+
+    &--left {
+      border-radius: 50px 0 0 50px;
+    }
+
+    &--right {
+      border-radius: 0 50px 50px 0;
+    }
+
+    &:focus {
+      z-index: 2;
+      outline: 3px solid $color-focus-outline;
+    }
+  }
+}

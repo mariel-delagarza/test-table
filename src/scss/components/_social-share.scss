@@ -1,0 +1,50 @@
+@use "../abstracts" as *;
+
+.share {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  &__link {
+    @include font-size(16px);
+    padding: rem(8);
+    color: $color-light-yellow;
+    transition: $transition__link;
+    fill: $color-light-yellow;
+
+    &:hover {
+      fill: $color-dark-yellow;
+    }
+
+    &:focus {
+      outline: 3px solid $color-focus-outline;
+    }
+  }
+}
+
+.social {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  &__link {
+    @include font-size(16px);
+    padding: rem(8);
+    color: $color-light-yellow;
+    fill: $color-light-yellow;
+    transition: $transition__link;
+
+    &:hover {
+      fill: $color-dark-yellow;
+    }
+
+    &:focus {
+      fill: $color-light-yellow;
+      outline: 3px solid $color-focus-outline;
+    }
+  }
+}

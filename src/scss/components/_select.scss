@@ -1,0 +1,79 @@
+@use "../abstracts/" as *;
+
+.options {
+  --border: 0;
+  --itemColor: $color-text-gray-400;
+  --itemIsActiveColor: $color-text-gray-400;
+  --itemIsActiveBG: $color-background-light-blue-100;
+
+  button + button {
+    margin-left: rem(16);
+  }
+}
+
+.selects {
+  display: flex;
+  flex-direction: column;
+  padding-top: rem(32);
+  padding-bottom: rem(48);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  gap: rem(24);
+  // background of entire div containing all dropdowns
+  background-color: $color-off-white;
+
+  @include breakpoint("medium") {
+    display: grid;
+    grid-template-columns: repeat(4, calc(25% - 2rem));
+    gap: rem(40);
+    padding-top: rem(48);
+    padding-bottom: rem(56);
+  }
+}
+
+.selectContainer {
+  width: 100%;
+}
+
+.select-container {
+  --border: 0;
+  --background: transparent;
+  border-bottom: 1px solid $color-main-red;
+  --borderRadius: 0;
+  @extend %text-style-ui-2;
+  --indicatorWidth: rem(12);
+  --indicatorHeight: rem(6);
+  --inputFontSize: rem(16);
+  display: flex;
+  flex-direction: column;
+  // color of the text inside the dropdowns
+  color: $color-text-main;
+
+  &:hover {
+    border-color: $color-main-red;
+  }
+
+  &:focus-within {
+    //underline color when dropdown is open
+    border-bottom: 1px solid $color-main-red;
+
+    .select__select-tag-icon {
+      fill: $color-dark-red;
+      color: $color-dark-red;
+    }
+  }
+
+  @include breakpoint("medium") {
+    max-width: rem(350);
+  }
+}
+
+.listContainer {
+  .item {
+    --height: 1.2;
+  }
+}
+
+.hide {
+  display: none;
+}

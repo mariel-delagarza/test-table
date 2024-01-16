@@ -1,0 +1,16 @@
+@use "../abstracts/" as *;
+
+.table-container {
+  background-color: $color-off-white;
+
+  &__header {
+    max-width: $size__page-max-width;
+    margin-left: var(--container-padding);
+    margin-right: var(--container-padding);
+  }
+
+  &__subtitle {
+    padding-top: 20px;
+    @extend %text-style-heading-2;
+  }
+}

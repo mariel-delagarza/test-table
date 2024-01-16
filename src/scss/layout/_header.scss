@@ -1,0 +1,65 @@
+@use "../abstracts/" as *;
+
+/*===============================
+=            Header            =
+===============================*/
+
+.header {
+  z-index: 1000;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  border-bottom: 1px solid $color-light-red;
+  padding-right: var(--container-padding);
+  padding-left: var(--container-padding);
+
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: rem(8);
+    margin-bottom: rem(4);
+
+    @include breakpoint("medium") {
+      padding-top: rem(16);
+      margin-bottom: rem(8);
+    }
+  }
+
+  &__logo {
+    display: inherit;
+    transition: $transition__link;
+    background-image: url(/assets/static/CSIS-logo.svg);
+    background-repeat: no-repeat;
+    width: 88px;
+    height: 24px;
+
+    @include breakpoint("medium") {
+      background: no-repeat url(/assets/static/CSIS-logo-long.svg);
+      width: 286px;
+      height: 24px;
+      font-size: rem(16);
+    }
+
+    &:hover {
+      filter: invert(53%) sepia(59%) saturate(4508%) hue-rotate(27deg)
+        brightness(99%) contrast(101%);
+    }
+  }
+
+  a,
+  button {
+    &:hover {
+      // color brand-blue-600
+      filter: invert(53%) sepia(59%) saturate(4508%) hue-rotate(27deg)
+        brightness(99%) contrast(101%);
+      color: $color-focus-outline;
+      transition: $transition__link;
+    }
+
+    &:focus {
+      outline: 4px solid $color-focus-outline;
+      border-radius: 1px;
+    }
+  }
+}
