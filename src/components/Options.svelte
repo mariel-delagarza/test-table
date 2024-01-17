@@ -228,7 +228,7 @@
 <div class="selects">
   <!--Speaker-->
   <div class="select-container">
-    <div class="label">Speaker</div>
+    <div class="label">Sector</div>
     <Select
       indicatorSvg={chevron}
       showChevron={true}
@@ -242,7 +242,7 @@
   </div>
   <!--Type-->
   <div class="select-container">
-    <div class="label">Type</div>
+    <div class="label">Subsector</div>
     <Select
       indicatorSvg={chevron}
       showChevron={true}
@@ -256,7 +256,7 @@
   </div>
   <!--Month-->
   <div class="select-container">
-    <div class="label">Month</div>
+    <div class="label">State</div>
     <Select
       indicatorSvg={chevron}
       showChevron={true}
@@ -270,7 +270,7 @@
   </div>
   <!-- Year-->
   <div class="select-container">
-    <div class="label">Year</div>
+    <div class="label">Resource Type</div>
     <Select
       indicatorSvg={chevron}
       showChevron={true}
