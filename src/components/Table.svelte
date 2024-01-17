@@ -41,13 +41,7 @@
     row.isOpen ? (row.isOpen = true) : (row.isOpen = !row.isOpen)
   }
 
-  const headerNames = [
-    "Event",
-    "Date (EST)",
-    "Category",
-    "Speaker",
-    "Type of Resource",
-  ]
+  const headerNames = ["Heeadline", "State", "Resource Type", "Date Posted"]
 
   $: sortBy = { col: "event", ascending: true }
 
@@ -196,21 +190,17 @@
                 <span class="icon-container" />{rows.timelineEvent.title}
               </div></td
             >
-            <!-- event date - displays string value -->
-            <td class="table__body__cell table__body__cell--data"
-              >{rows.date_string}</td
-            >
             <!-- event category -->
             <td class="table__body__cell table__body__cell--data"
               >{rows.category}</td
             >
-            <!-- event speaker -->
-            <td class="table__body__cell table__body__cell--data"
-              >{rows.speaker}</td
-            >
             <!-- event type -->
             <td class="table__body__cell table__body__cell--data"
               >{rows.type}</td
+            >
+            <!-- event date - displays string value -->
+            <td class="table__body__cell table__body__cell--data"
+              >{rows.date_string}</td
             >
           </tr>
           <!--this tr is the stuff under the dropdown -->
