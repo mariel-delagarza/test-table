@@ -222,38 +222,6 @@
   })
 </script>
 
-<section class="table-container__header">
-  <h2 class="table-container__subtitle">Explore Events</h2>
-</section>
-
-<!-- tabs at the top (all, Other, Russia, NATO, US, Allies)-->
-<section class="options__container">
-  <div class="options__header">
-    <button
-      class="options__btn options__btn--tab options__btn--tab--all options__btn--tab--active options__btn--tab--all--active"
-      data-tab={"all"}
-      on:click={(event) => handleSelect(event, "Category")}
-      >All <span
-        data-count={"all"}
-        class="options__count options__count--active">{eventTotal}</span
-      >
-    </button>
-    {#each dataset.categories as category}
-      <button
-        class="options__btn options__btn--tab options__btn--tab--{category} "
-        data-tab={category}
-        value={category}
-        on:click={(event) => handleSelect(event, "Category")}
-        >{category}
-        <span
-          data-count={category}
-          class="options__count options__count--{category}"
-          >{getPGCount(category)}</span
-        >
-      </button>
-    {/each}
-  </div>
-</section>
 
 <!-- dropdown filters -->
 

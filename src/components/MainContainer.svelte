@@ -1,10 +1,6 @@
 <script>
-  import Header from "./Header.svelte"
-  import IntroContent from "./IntroContent.svelte"
   import Options from "./Options.svelte"
   import Table from "./Table.svelte"
-  import About from "./About.svelte"
-  import Footer from "./Footer.svelte"
 
   export let dataset
   let selectedCategory = ""
@@ -60,9 +56,6 @@
 </script>
 
 <div id="site-content">
-  <Header />
-
-  <IntroContent />
 
   <section class="table-container">
     <Options
@@ -79,8 +72,6 @@
 
     <Table filteredData={filteredData()} bind:row />
   </section>
-  <About />
-  <Footer />
 </div>
 
 <style lang="scss">
