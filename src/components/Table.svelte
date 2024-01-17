@@ -41,7 +41,7 @@
     row.isOpen ? (row.isOpen = true) : (row.isOpen = !row.isOpen)
   }
 
-  const headerNames = ["Heeadline", "State", "Resource Type", "Date Posted"]
+  const headerNames = ["Headline", "State", "Resource Type", "Date Posted"]
 
   $: sortBy = { col: "event", ascending: true }
 
