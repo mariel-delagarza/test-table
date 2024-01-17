@@ -230,19 +230,6 @@
                     {/each}
                   </div>
                 </div>
-                {#if rows.timelineEvent.image_url && rows.timelineEvent.image_source}
-                  <div class="img-container">
-                    <img
-                      loading="lazy"
-                      src={rows.timelineEvent.image_url}
-                      alt={rows.timelineEvent.image_source}
-                    />
-                    <span
-                      ><b>Photo Credit:</b>
-                      {rows.timelineEvent.image_source}</span
-                    >
-                  </div>
-                {/if}
               </div>
             </td>
           </tr>
