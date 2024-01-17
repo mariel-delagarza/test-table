@@ -106,7 +106,9 @@
     const divTimelineEvent = document.querySelector(
       ".table__cell--header__container__event",
     )
-    divTimelineEvent.children[1].children[1].classList.add("sort-icon--active")
+
+    console.log(divTimelineEvent)
+    divTimelineEvent.children[1].classList.add("sort-icon--active")
     // Sync horizontal scroll of table header and table body
     // Inspired by https://codepen.io/Goweb/pen/rgrjWx
     const scrollSync = () => {
@@ -224,17 +226,6 @@
                             ,
                           {/if}</a
                         >
-                        {#if source[2] == 1}
-                          <span
-                            class="icon-tag-container"
-                            use:tooltip={{ theme: "poni" }}
-                            aria-hidden="true"
-                            aria-label="A vpn is required to view this source."
-                          >
-                            <!-- Insert your VPN Icon here -->
-                            <Icon name="Icon-info-alt" class="icon" />
-                          </span>
-                        {/if}
                       {/if}
                     {/each}
                   </div>
