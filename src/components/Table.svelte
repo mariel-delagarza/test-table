@@ -6,6 +6,16 @@
   export let filteredData
   export let row
 
+  // Pagination state
+  export let currentPage = 1
+  export let itemsPerPage = 100
+
+  // Compute the paginated data
+  $: paginatedData = filteredData.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
   let sortIconContainer
   $: sortClass = "inactive"
 
@@ -193,7 +203,7 @@
   <div class="table__container" id="table-body">
     <table class="table table__body">
       <tbody>
-        {#each filteredData as rows}
+        {#each paginatedData as rows}
           <tr
             on:click={(e) => handleClick(e)}
             class="title table__body__cell--border"

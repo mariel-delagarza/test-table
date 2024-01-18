@@ -18,33 +18,6 @@
   const optionIdentifier = "value"
   const labelIdentifier = "label"
 
-  function updateActiveTab(val) {
-    console.log("updateActiveTab val: ", val)
-    const value = val ? val.split("_").join("-") : "all"
-    const spanCountActive = document.querySelector(`.options__count--active`)
-    const spanCount = document.querySelector(
-      `.options__count[data-count="${value}"]`,
-    )
-    spanCountActive.classList.remove("options__count--active")
-    spanCount.classList.add(`options__count--active`)
-
-    const activeTab = document.querySelector(`.options__btn--tab--active`)
-    const tabActivate = document.querySelector(
-      `.options__btn--tab[data-tab="${value}"]`,
-    )
-    activeTab.classList.remove(
-      "options__btn--tab--active",
-      "options__btn--tab--Russia--active",
-      "options__btn--tab--Other--active",
-      "options__btn--tab--NATO--active",
-      "options__btn--tab--all--active",
-    )
-    tabActivate.classList.add(
-      "options__btn--tab--active",
-      `options__btn--tab--${value}--active`,
-    )
-  }
-
   function removeRowActiveTitleStyle() {
     const title = document.querySelectorAll(".title--active")
     title.forEach((item) => {
@@ -107,12 +80,6 @@
     switchRowBottomLine()
   }
 
-  function setSelectedCategory(event) {
-    const value = event.target ? event.target.value : event.detail.value
-    updateActiveTab(value)
-    selectedCategory = value
-  }
-
   function handleClear(selectName) {
     if (row.isOpen) {
       row.isOpen = !row.isOpen
@@ -150,36 +117,30 @@
 
   $: chevron = isListOpen ? chevronUp : chevronDown
 
-  function handleScrollLeft() {
-    const tableContainer = document.getElementById("table-body")
-    const btnIconLeft = document.querySelector("#icon-scroll-left")
-    const btnIconRight = document.querySelector("#icon-scroll-right")
+  // Pagination state
+  export let currentPage = 1
+  const itemsPerPage = 100
+  let totalEntries = filteredData.length
+  let totalPages = Math.ceil(totalEntries / itemsPerPage)
 
-    tableContainer.scrollLeft -= 100
-    if (btnIconRight.classList.contains("inactive")) {
-      btnIconRight.classList.remove("inactive")
-    }
-    if (tableContainer.scrollLeft === 0) {
-      btnIconLeft.classList.add("inactive")
-    }
+  $: if (currentPage) {
+  console.log(`Current page is now: ${currentPage}`);
+}
+
+
+  // Handle clicking the pagination buttons
+  function goToNextPage() {
+    if (currentPage < totalPages) currentPage++
   }
 
-  function handleScrollRight() {
-    const tableContainer = document.getElementById("table-body")
-    const table = document.getElementsByClassName("table")[0]
-    const btnIconLeft = document.querySelector("#icon-scroll-left")
-    const btnIconRight = document.querySelector("#icon-scroll-right")
-    tableContainer.scrollLeft += 100
-    if (btnIconLeft.classList.contains("inactive")) {
-      btnIconLeft.classList.remove("inactive")
-    }
-    if (
-      Math.ceil(tableContainer.scrollLeft) + tableContainer.offsetWidth >=
-      table.offsetWidth
-    ) {
-      btnIconRight.classList.add("inactive")
-    }
+  function goToPreviousPage() {
+    if (currentPage > 1) currentPage--
   }
+
+  // Calculate the range of entries being shown
+  $: startEntry = (currentPage - 1) * itemsPerPage + 1
+  $: endEntry = startEntry + itemsPerPage - 1
+  if (endEntry > totalEntries) endEntry = totalEntries
 
   onMount(() => {
     isListOpen = false
@@ -277,13 +238,13 @@
     <Search bind:searchText />
     <div class="options__navigation-inner">
       <span class="options__table-total-entries"
-        >Showing {totalEntries} {totalEntries > 1 ? "entries" : "entry"}</span
+        >Showing {startEntry}-{endEntry} of {totalEntries} entries</span
       >
       <button
         id="btn-scroll-left"
         class="btn btn--scroll btn--scroll--left inactive"
         aria-label="Scroll table to the left"
-        on:click={handleScrollLeft}
+        on:click={goToPreviousPage}
         ><Icon
           id="icon-scroll-left"
           name="Icon-left"
@@ -294,7 +255,7 @@
         id="btn-scroll-right"
         class="btn btn--scroll btn--scroll--right"
         aria-label="Scroll table to the right"
-        on:click={handleScrollRight}
+        on:click={goToNextPage}
         ><Icon id="icon-scroll-right" name="Icon-right" class="icon" /></button
       >
     </div>

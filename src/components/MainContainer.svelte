@@ -2,35 +2,44 @@
   import Options from "./Options.svelte"
   import Table from "./Table.svelte"
 
-  export let dataset;
-  let selectedSector = "";
-  let selectedSubsector = "";
-  let selectedResourceType = "";
-  let selectedState = ""; 
-  let searchText;
-  $: row = { isOpen: false };
+  export let dataset
+  let currentPage = 1
+  let selectedSector = ""
+  let selectedSubsector = ""
+  let selectedResourceType = ""
+  let selectedState = ""
+  let searchText
+  $: row = { isOpen: false }
 
   $: filteredData = () => {
     return dataset.data
       .filter((row) => {
-    
         const rowDate = new Date(row.date_string)
 
-        const isSelectedState = selectedState ? row.states.includes(selectedState) : true;
-        const isSelectedSector = selectedSector ? row.sectors.includes(selectedSector) : true;
-        const isSelectedSubsector = selectedSubsector ? row.subsectors.includes(selectedSubsector) : true;
-        const isSelectedResourceType = selectedResourceType ? row.type === selectedResourceType : true;
-        
+        const isSelectedState = selectedState
+          ? row.states.includes(selectedState)
+          : true
+        const isSelectedSector = selectedSector
+          ? row.sectors.includes(selectedSector)
+          : true
+        const isSelectedSubsector = selectedSubsector
+          ? row.subsectors.includes(selectedSubsector)
+          : true
+        const isSelectedResourceType = selectedResourceType
+          ? row.type === selectedResourceType
+          : true
+
         const filteredTimelineEvent = searchText
           ? searchText.toLowerCase().trim()
           : ""
 
-
         const matchesText = (texts) => {
           return Array.isArray(texts)
-            ? texts.some(text => text.toLowerCase().includes(filteredTimelineEvent))
-            : texts.toLowerCase().includes(filteredTimelineEvent);
-        };
+            ? texts.some((text) =>
+                text.toLowerCase().includes(filteredTimelineEvent),
+              )
+            : texts.toLowerCase().includes(filteredTimelineEvent)
+        }
 
         const matchesAnyCondition = [
           matchesText(row.timelineEvent.headline),
@@ -52,10 +61,10 @@
 </script>
 
 <div id="site-content">
-
   <section class="table-container">
     <Options
       {dataset}
+      bind:currentPage={currentPage}
       filteredData={filteredData()}
       bind:row
       bind:selectedSector
@@ -64,10 +73,9 @@
       bind:selectedState
       bind:searchText
     />
-  
-    <Table filteredData={filteredData()} bind:row />
+
+    <Table bind:currentPage={currentPage} filteredData={filteredData()} bind:row />
   </section>
-  
 </div>
 
 <style lang="scss">
