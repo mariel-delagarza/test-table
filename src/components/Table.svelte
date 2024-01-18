@@ -10,47 +10,54 @@
   $: sortClass = "inactive"
 
   const sortByColumns = [
-    "date",
-    "event",
-    "category",
-    "speaker",
-    "type of resource",
+    "headline",
+    "sector",
+    "state",
+    "resource type",
+    "date posted",
   ]
 
   function handleClick(e) {
-    let title = undefined
+    let headline = undefined
     let currentRow = undefined
     let extraContent = undefined
 
-    if (e.target.parentNode.classList.contains("title")) {
-      title = e.target.parentNode
-      currentRow = title.nextElementSibling
+    if (e.target.parentNode.classList.contains("headline")) {
+      headline = e.target.parentNode
+      currentRow = headline.nextElementSibling
       extraContent = e.target.parentNode.nextElementSibling
     } else {
-      title = e.target.parentNode.parentNode
-      currentRow = title.nextElementSibling
+      headline = e.target.parentNode.parentNode
+      currentRow = headline.nextElementSibling
       extraContent = e.target.parentNode.parentNode.nextElementSibling
     }
 
-    title.classList.toggle("title--active")
-    title.classList.toggle("table__body__cell--border")
-    currentRow.classList.toggle("table__body__cell--border")
+    headline.classList.toggle("title--active")
+    headline.classList.toggle("table__body__cell--border")
+    //currentRow.classList.toggle("table__body__cell--border")
     // Show/Hide extraContent
     extraContent.classList.toggle("active")
     extraContent.classList.toggle("hide")
     row.isOpen ? (row.isOpen = true) : (row.isOpen = !row.isOpen)
   }
 
-  const headerNames = ["Headline", "State", "Resource Type", "Date Posted"]
+  const headerNames = [
+    "Headline",
+    "Sector",
+    "State",
+    "Resource Type",
+    "Date Posted",
+  ]
 
   $: sortBy = { col: "event", ascending: true }
 
   $: sort = (e, column) => {
-    column = column.toLowerCase().replace(/\s/g, "_") // replace spaces using regex with undesrscore
+    column = column.toLowerCase().replace(/\s/g, "_") // replace spaces using regex with underscore
     const iconsActive = document.querySelectorAll(".sort-icon--active")
     iconsActive.forEach((icon) => {
       icon.classList.remove("sort-icon--active")
     })
+
     if (sortBy.col == column) {
       sortBy.ascending = !sortBy.ascending
       sortClass = sortBy.ascending ? "active" : "inactive"
@@ -63,39 +70,47 @@
     // Modifier to sorting function for ascending or descending
     let sortModifier = sortBy.ascending ? 1 : -1
 
-    // current function - does NOT also sort by date,
-    // only puts event titles in alpha order
-    let sortTimelineEvent = (a, b) =>
-      a.timelineEvent.title < b.timelineEvent.title
-        ? -1 * sortModifier
-        : a.timelineEvent.title > b.timelineEvent.title
-        ? 1 * sortModifier
-        : 0
+    // Define sorting logic for each column
+    let sortFunction
 
-    let sortDate = (a, b) =>
-      a.date < b.date
-        ? -1 * sortModifier
-        : a.date > b.date
-        ? 1 * sortModifier
-        : 0
-
-    let sortColumnName = (a, b) =>
-      a[column] < b[column]
-        ? -1 * sortModifier
-        : a[column] > b[column]
-        ? 1 * sortModifier
-        : 0
-
-    //Sort by timeline event title
-    if (column == "event") {
-      console.log(
-        "filteredData",
-        (filteredData = filteredData.sort(sortTimelineEvent)),
-      )
-      return (filteredData = filteredData.sort(sortTimelineEvent))
+    if (column === "headline") {
+      sortFunction = (a, b) =>
+        a.timelineEvent.headline < b.timelineEvent.headline
+          ? -1 * sortModifier
+          : a.timelineEvent.headline > b.timelineEvent.headline
+          ? 1 * sortModifier
+          : 0
+    } else if (column === "sector") {
+      sortFunction = (a, b) => {
+        let sectorA = a.sectors[0] || "" // Fallback to empty string if undefined
+        let sectorB = b.sectors[0] || ""
+        return sectorA.localeCompare(sectorB) * sortModifier
+      }
+    } else if (column === "state") {
+      sortFunction = (a, b) => {
+        let stateA = a.states[0] || "" // Fallback to empty string if undefined
+        let stateB = b.states[0] || ""
+        return stateA.localeCompare(stateB) * sortModifier
+      }
+    } else if (column === "resource_type") {
+      sortFunction = (a, b) => a.type.localeCompare(b.type) * sortModifier
+    } else if (column === "date_posted") {
+      sortFunction = (a, b) =>
+        a.date < b.date
+          ? -1 * sortModifier
+          : a.date > b.date
+          ? 1 * sortModifier
+          : 0
     }
 
-    filteredData = filteredData.sort(sortDate).sort(sortColumnName)
+    // Apply the sorting function
+    if (sortFunction) {
+      // Use a temporary variable for sorted data
+      const sortedData = [...filteredData].sort(sortFunction)
+      console.log(column)
+      console.log(sortedData)
+      filteredData = sortedData
+    }
   }
 
   onMount(() => {
@@ -107,8 +122,7 @@
       ".table__cell--header__container__event",
     )
 
-    console.log(divTimelineEvent)
-    divTimelineEvent.children[1].classList.add("sort-icon--active")
+    // divTimelineEvent.children[1].classList.add("sort-icon--active")
     // Sync horizontal scroll of table header and table body
     // Inspired by https://codepen.io/Goweb/pen/rgrjWx
     const scrollSync = () => {
@@ -182,27 +196,29 @@
         {#each filteredData as rows}
           <tr
             on:click={(e) => handleClick(e)}
-            class="title table__body__cell--border {rows.key_moment !== null
-              ? 'key-moment'
-              : ''}"
+            class="title table__body__cell--border"
           >
             <!-- event name/title -->
             <td class="table__body__cell table__body__cell--data"
               ><div class="table__body__cell__title-container">
-                <span class="icon-container" />{rows.timelineEvent.title}
+                <span class="icon-container" />{rows.timelineEvent.headline}
               </div></td
             >
-            <!-- event category -->
+            <!-- event sector -->
             <td class="table__body__cell table__body__cell--data"
-              >{rows.category}</td
+              >{rows.sectors.join(", ")}</td
             >
-            <!-- event type -->
+            <!-- event state -->
+            <td class="table__body__cell table__body__cell--data"
+              >{rows.states.join(", ")}</td
+            >
+            <!-- event resource type -->
             <td class="table__body__cell table__body__cell--data"
               >{rows.type}</td
             >
             <!-- event date - displays string value -->
             <td class="table__body__cell table__body__cell--data"
-              >{rows.date_string}</td
+              >{rows.date_month}. {rows.date_year}</td
             >
           </tr>
           <!--this tr is the stuff under the dropdown -->
@@ -210,25 +226,48 @@
             <td class="table__body__cell" colspan="6">
               <div class="extra-content__container">
                 <div class="description">
-                  <div>{rows.timelineEvent.quote}</div>
-                  <div class="link">
-                    Source(s):
-                    {#each rows.timelineEvent.sources as source, index}
-                      {#if source[0] != ""}
-                        <a
-                          href={source[0]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          >{source[1]}{#if index == 0 && rows.timelineEvent.sources[1][0] != ""}
-                            ,
-                          {/if}
-                          {#if index == 1 && rows.timelineEvent.sources[2][0] != ""}
-                            ,
-                          {/if}</a
-                        >
-                      {/if}
-                    {/each}
+                  <div>
+                    IN DETAIL: <a
+                      href={rows.timelineEvent.url}
+                      target="_blank"
+                      rel="noopener noreferrer">Read More</a
+                    >
                   </div>
+                  {#if rows.timelineEvent.content}
+                    <br />
+                    <div>{rows.timelineEvent.content}</div>
+                    <br />
+                  {/if}
+                  {#if rows.timelineEvent.sources && rows.timelineEvent.sources.length > 0}
+                    <div class="link">
+                      {#if rows.timelineEvent.sources && rows.timelineEvent.sources.length > 0}
+                        SOURCE(S):
+                        {#each rows.timelineEvent.sources as source, index (source)}
+                          {#if source[1]}
+                            <!-- Check if source name is present -->
+                            {#if source[0]}
+                              <!-- Check if source URL is present -->
+                              <a
+                                href={source[0]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {source[1]}{index <
+                                rows.timelineEvent.sources.length - 1
+                                  ? ","
+                                  : ""}
+                              </a>
+                            {:else}
+                              {source[1]}{index <
+                              rows.timelineEvent.sources.length - 1
+                                ? ", "
+                                : ""}
+                            {/if}
+                          {/if}
+                        {/each}
+                      {/if}
+                    </div>
+                  {/if}
                 </div>
               </div>
             </td>

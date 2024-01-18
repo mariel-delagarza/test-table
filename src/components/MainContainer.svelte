@@ -2,53 +2,49 @@
   import Options from "./Options.svelte"
   import Table from "./Table.svelte"
 
-  export let dataset
-  let selectedCategory = ""
-  let selectedType = ""
-  let selectedSpeaker = ""
-  let selectedMonth = ""
-  let searchText
-  let selectedYear = ""
-  $: row = { isOpen: false }
+  export let dataset;
+  let selectedSector = "";
+  let selectedSubsector = "";
+  let selectedResourceType = "";
+  let selectedState = ""; 
+  let searchText;
+  $: row = { isOpen: false };
 
   $: filteredData = () => {
     return dataset.data
       .filter((row) => {
+    
         const rowDate = new Date(row.date_string)
-        const rowYear = rowDate.getFullYear()
-        const rowMonth = rowDate.toLocaleString("default", { month: "long" })
 
-        const matchesYear = selectedYear ? rowYear === selectedYear : true
-        const matchesMonth = selectedMonth ? rowMonth === selectedMonth : true
-        const matchesSpeaker = selectedSpeaker
-          ? row.speaker.trim().toLowerCase() ===
-            selectedSpeaker.trim().toLowerCase()
-          : true
-        const isSelectedCategory = selectedCategory
-          ? row.category === selectedCategory
-          : true
-        const isSelectedType = selectedType ? row.type === selectedType : true
-
+        const isSelectedState = selectedState ? row.states.includes(selectedState) : true;
+        const isSelectedSector = selectedSector ? row.sectors.includes(selectedSector) : true;
+        const isSelectedSubsector = selectedSubsector ? row.subsectors.includes(selectedSubsector) : true;
+        const isSelectedResourceType = selectedResourceType ? row.type === selectedResourceType : true;
+        
         const filteredTimelineEvent = searchText
           ? searchText.toLowerCase().trim()
           : ""
-        const matchesText = (text) =>
-          text.toLowerCase().includes(filteredTimelineEvent)
+
+
+        const matchesText = (texts) => {
+          return Array.isArray(texts)
+            ? texts.some(text => text.toLowerCase().includes(filteredTimelineEvent))
+            : texts.toLowerCase().includes(filteredTimelineEvent);
+        };
 
         const matchesAnyCondition = [
-          matchesText(row.timelineEvent.title),
-          matchesText(row.category),
+          matchesText(row.timelineEvent.headline),
+          matchesText(row.sectors),
+          matchesText(row.subsectors),
           matchesText(row.type),
-          matchesText(row.speaker),
         ].some(Boolean)
 
         return (
-          matchesYear &&
-          matchesMonth &&
-          matchesSpeaker &&
           matchesAnyCondition &&
-          isSelectedCategory &&
-          isSelectedType
+          isSelectedSector &&
+          isSelectedSubsector &&
+          isSelectedResourceType &&
+          isSelectedState
         )
       })
       .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
@@ -62,16 +58,16 @@
       {dataset}
       filteredData={filteredData()}
       bind:row
-      bind:selectedSpeaker
-      bind:selectedType
-      bind:selectedCategory
+      bind:selectedSector
+      bind:selectedSubsector
+      bind:selectedResourceType
+      bind:selectedState
       bind:searchText
-      bind:selectedMonth
-      bind:selectedYear
     />
-
+  
     <Table filteredData={filteredData()} bind:row />
   </section>
+  
 </div>
 
 <style lang="scss">

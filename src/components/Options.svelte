@@ -6,20 +6,14 @@
 
   export let dataset
   export let filteredData
-  export let selectedCategory
-  export let selectedType
-  export let selectedSpeaker
-  export let selectedMonth
-  export let selectedYear
+  export let selectedSector
+  export let selectedSubsector
+  export let selectedState
+  export let selectedResourceType
   export let searchText = ""
   export let row
 
   $: totalEntries = filteredData.length
-
-  const eventTotal = dataset.data.length
-  function getPGCount(category) {
-    return dataset.data.filter((row) => row.category.includes(category)).length
-  }
 
   const optionIdentifier = "value"
   const labelIdentifier = "label"
@@ -89,20 +83,17 @@
     }
 
     switch (selectName) {
-      case "Speaker":
-        setSelectedSpeaker(event.detail.value)
+      case "Sector":
+        selectedSector = event.detail.value
         break
-      case "Category":
-        setSelectedCategory(event)
+      case "Subsector":
+        selectedSubsector = event.detail.value
         break
-      case "Type":
-        selectedType = event.detail.value
+      case "State":
+        selectedState = event.detail.value
         break
-      case "Month":
-        selectedMonth = event.detail.value
-        break
-      case "Year":
-        selectedYear = event.detail.value
+      case "Resource Type":
+        selectedResourceType = event.detail.value
         break
       default:
         console.error("Invalid selectName:", selectName)
@@ -114,13 +105,6 @@
     removeRowActiveTitleStyle()
     removeExtraContentStyle()
     switchRowBottomLine()
-  }
-
-  function setSelectedSpeaker(value) {
-    const index = dataset.speaker.findIndex((element) =>
-      element.includes(value),
-    )
-    selectedSpeaker = dataset.speaker[index]
   }
 
   function setSelectedCategory(event) {
@@ -136,17 +120,22 @@
       removeExtraContentStyle()
       switchRowBottomLine()
     }
-    if (selectName === "Category") {
-      selectedCategory = ""
-      updateActiveTab("")
-    } else if (selectName === "Speaker") {
-      selectedSpeaker = ""
-    } else if (selectName == "Type") {
-      selectedType = ""
-    } else if (selectName == "Month") {
-      selectedMonth = ""
-    } else {
-      selectedYear = ""
+
+    switch (selectName) {
+      case "Sector":
+        selectedSector = ""
+        break
+      case "Subsector":
+        selectedSubsector = ""
+        break
+      case "State":
+        selectedState = ""
+        break
+      case "Resource Type":
+        selectedResourceType = ""
+        break
+      default:
+        console.error("Invalid selectName:", selectName)
     }
   }
 
@@ -222,11 +211,10 @@
   })
 </script>
 
-
 <!-- dropdown filters -->
 
 <div class="selects">
-  <!--Speaker-->
+  <!--Type-->
   <div class="select-container">
     <div class="label">Sector</div>
     <Select
@@ -234,13 +222,12 @@
       showChevron={true}
       {optionIdentifier}
       {labelIdentifier}
-      items={dataset.speaker_name}
-      placeholder="Select a speaker"
-      on:select={(event) => handleSelect(event, "Speaker")}
-      on:clear={() => handleClear("Speaker")}
+      items={dataset.sectors}
+      placeholder="Select a sector"
+      on:select={(event) => handleSelect(event, "Sector")}
+      on:clear={(event) => handleClear("Sector")}
     />
   </div>
-  <!--Type-->
   <div class="select-container">
     <div class="label">Subsector</div>
     <Select
@@ -248,10 +235,10 @@
       showChevron={true}
       {optionIdentifier}
       {labelIdentifier}
-      items={dataset.type}
+      items={dataset.subsectors}
       placeholder="Select a type"
-      on:select={(event) => handleSelect(event, "Type")}
-      on:clear={(event) => handleClear("Type")}
+      on:select={(event) => handleSelect(event, "Subsector")}
+      on:clear={(event) => handleClear("Subsector")}
     />
   </div>
   <!--Month-->
@@ -262,10 +249,10 @@
       showChevron={true}
       {optionIdentifier}
       {labelIdentifier}
-      items={dataset.months}
-      placeholder="Select a month"
-      on:select={(event) => handleSelect(event, "Month")}
-      on:clear={() => handleClear("Month")}
+      items={dataset.states}
+      placeholder="Select a state"
+      on:select={(event) => handleSelect(event, "State")}
+      on:clear={() => handleClear("State")}
     />
   </div>
   <!-- Year-->
@@ -276,10 +263,10 @@
       showChevron={true}
       {optionIdentifier}
       {labelIdentifier}
-      items={dataset.years}
-      placeholder="Select a year"
-      on:select={(event) => handleSelect(event, "Year")}
-      on:clear={() => handleClear("Year")}
+      items={dataset.type}
+      placeholder="Select a resource type"
+      on:select={(event) => handleSelect(event, "Resource Type")}
+      on:clear={() => handleClear("Resource Type")}
     />
   </div>
 </div>
