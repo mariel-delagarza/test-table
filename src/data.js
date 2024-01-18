@@ -1,10 +1,78 @@
 const URL = "http://localhost:3001/feed.json"
 
-export default function getData() {
+/*
+URL from parent gives us
+/sectors/energy
+
+so in our response, we filter to only include items where
+sectors includes energy
+
+if we get /states/delhi
+
+we filter to only include items where states includes delhi
+
+const messageFromParent = {URL}
+
+process URL to get the filter
+
+*/
+
+// Function to filter data based on URL path
+function filterData(items, category, filterValue) {
+
+  switch (category) {
+    case 'states':
+      return filterValue 
+      ? items.filter(item => item.states.map(state => state.toLowerCase()).includes(filterValue))
+      : items.filter(item => item.states.length > 0);
+    case 'sectors':
+      return filterValue 
+        ? items.filter(item => item.sectors.map(sector => sector.toLowerCase()).includes(filterValue))
+        : items.filter(item => item.sectors.length > 0);
+    case 'analysis':
+      return items.filter(item => item.resource_type === 'Newsletter');
+    case 'resources':
+      return items.filter(item => item.resource_type === 'Resource');
+    default:
+      return items;
+  }
+}
+
+// Function to grab the subsector if it exists - we'll use
+// this for the dropdown if a user selects a subsector from the
+// nav bar.
+function getSubsector(url) {
+  const subsectorPrefix = "#subsector=";
+  const subsectorIndex = url.indexOf(subsectorPrefix);
+
+  if (subsectorIndex !== -1) {
+    // Extract the subsector from the URL
+    return url.substring(subsectorIndex + subsectorPrefix.length);
+  }
+
+  // Return null or an empty string if no subsector is found
+  return null;
+}
+
+
+
+export default function getData(messageFromParent) {
+
+  const path = messageFromParent.split('.org')[1];
+  const pathParts = path.split('/');
+  console.log(pathParts[2])
+  const filterCategory = pathParts[1];
+  const filterValue = pathParts[2] ? pathParts[2].toLowerCase() : ''; // Case-insensitive filter value
+
+  const subsector_filter = getSubsector(messageFromParent);
+  console.log(subsector_filter)
+
   const dataPromise = fetch(URL)
     .then((response) => response.json())
     .then((res) => {
-      const data = res.items.map((item, index) => {
+      const filteredData = filterData(res.items, filterCategory, filterValue);
+  
+      const data = filteredData.map((item, index) => {
         let sources = item.primary_sources
         let transformedSources = sources.map((source) => {
           return [source.url || "", source.name || ""]
@@ -46,10 +114,13 @@ export default function getData() {
         data: data,
         dates: dates,
         type: setsOfData.uniqueResourceTypes,
-        sectors: setsOfData.uniqueSectors,
+        sectors: setsOfData.uniqueSectors,  
         subsectors: setsOfData.uniqueSubsectors,
         states: setsOfData.uniqueStates,
         years: setsOfData.uniqueYears,
+        subsector_filter: subsector_filter,
+        filterCategory: filterCategory,
+        filterValue: filterValue
       }
     })
   return dataPromise

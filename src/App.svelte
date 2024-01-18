@@ -5,8 +5,11 @@
 
   let dataset = {};
 
+  const messageFromParent = "https://indianstates.csis.org/analysis";
+
+
   onMount(async () => {
-    const res = await getData();
+    const res = await getData(messageFromParent);
     dataset = res;
   });
 </script>

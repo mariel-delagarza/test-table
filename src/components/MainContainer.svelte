@@ -64,7 +64,6 @@
   <section class="table-container">
     <Options
       {dataset}
-      bind:currentPage={currentPage}
       filteredData={filteredData()}
       bind:row
       bind:selectedSector
@@ -74,7 +73,7 @@
       bind:searchText
     />
 
-    <Table bind:currentPage={currentPage} filteredData={filteredData()} bind:row />
+    <Table {dataset} filteredData={filteredData()} bind:row />
   </section>
 </div>
 

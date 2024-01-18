@@ -3,18 +3,19 @@
   import tooltip from "../js/tooltip"
   import Icon from "./Icons.svelte"
 
+  export let dataset
   export let filteredData
   export let row
 
-  // Pagination state
-  export let currentPage = 1
-  export let itemsPerPage = 100
+  // // Pagination state
+  // export let currentPage = 1
+  // export let itemsPerPage = 100
 
-  // Compute the paginated data
-  $: paginatedData = filteredData.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+  // // Compute the paginated data
+  // $: paginatedData = filteredData.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage,
+  // )
 
   let sortIconContainer
   $: sortClass = "inactive"
@@ -51,13 +52,65 @@
     row.isOpen ? (row.isOpen = true) : (row.isOpen = !row.isOpen)
   }
 
-  const headerNames = [
+  console.log(dataset.filterCategory)
+  console.log(dataset.filterValue)
+  let filterCategory = dataset.filterCategory
+  let filterValue = dataset.filterValue
+
+  let headerNames = [
     "Headline",
     "Sector",
     "State",
     "Resource Type",
     "Date Posted",
   ]
+
+  // Mapping of header names to data keys
+  const headerToDataKey = {
+    Headline: "timelineEvent.headline",
+    Sector: "sectors",
+    State: "states",
+    "Resource Type": "type",
+    "Date Posted": "date",
+  }
+
+  // Helper function to get data for a given header
+  function getDataForHeader(header, rowData) {
+    const key = headerToDataKey[header]
+    const keys = key.split(".")
+    let data = rowData
+
+    keys.forEach((k) => {
+      data = data && data[k] !== undefined ? data[k] : ""
+    })
+
+    // Special handling for arrays (like sectors and states)
+    return Array.isArray(data) ? data.join(", ") : data
+  }
+
+  // Special handling for date format
+  function formatDate(month, year) {
+    return `${month}. ${year}`
+  }
+
+  // Reactive statement to update headers based on filterCategory and filterValue
+  $: {
+    if (filterCategory === "states") {
+      headerNames = ["Headline", "Sector", "Resource Type", "Date Posted"]
+    } else if (filterCategory === "sectors" && !filterValue) {
+      headerNames = [
+        "Headline",
+        "Sector",
+        "State",
+        "Resource Type",
+        "Date Posted",
+      ]
+    } else if (filterCategory === "sectors" && filterValue) {
+      headerNames = ["Headline", "State", "Resource Type", "Date Posted"]
+    } else if (filterCategory === "analysis") {
+      headerNames = ["Headline", "Sector", "State", "Date Posted"]
+    }
+  }
 
   $: sortBy = { col: "event", ascending: true }
 
@@ -203,34 +256,46 @@
   <div class="table__container" id="table-body">
     <table class="table table__body">
       <tbody>
-        {#each paginatedData as rows}
+        {#each filteredData as row}
           <tr
             on:click={(e) => handleClick(e)}
             class="title table__body__cell--border"
           >
-            <!-- event name/title -->
-            <td class="table__body__cell table__body__cell--data"
+            {#each headerNames as header}
+              {#if header === "Date Posted"}
+                <td class="table__body__cell table__body__cell--data">
+                  {formatDate(row.date_month, row.date_year)}
+                </td>
+              {:else}
+                <td class="table__body__cell table__body__cell--data">
+                  {getDataForHeader(header, row)}
+                </td>
+              {/if}
+            {/each}
+          </tr>
+
+          <!-- event name/title -->
+          <!-- <td class="table__body__cell table__body__cell--data"
               ><div class="table__body__cell__title-container">
                 <span class="icon-container" />{rows.timelineEvent.headline}
               </div></td
-            >
-            <!-- event sector -->
-            <td class="table__body__cell table__body__cell--data"
+            > -->
+          <!-- event sector -->
+          <!-- <td class="table__body__cell table__body__cell--data"
               >{rows.sectors.join(", ")}</td
-            >
-            <!-- event state -->
-            <td class="table__body__cell table__body__cell--data"
+            > -->
+          <!-- event state -->
+          <!-- <td class="table__body__cell table__body__cell--data"
               >{rows.states.join(", ")}</td
-            >
-            <!-- event resource type -->
-            <td class="table__body__cell table__body__cell--data"
+            > -->
+          <!-- event resource type -->
+          <!-- <td class="table__body__cell table__body__cell--data"
               >{rows.type}</td
-            >
-            <!-- event date - displays string value -->
-            <td class="table__body__cell table__body__cell--data"
+            > -->
+          <!-- event date - displays string value -->
+          <!-- <td class="table__body__cell table__body__cell--data"
               >{rows.date_month}. {rows.date_year}</td
-            >
-          </tr>
+            > -->
           <!--this tr is the stuff under the dropdown -->
           <tr class="extra-content hide">
             <td class="table__body__cell" colspan="6">
@@ -238,21 +303,21 @@
                 <div class="description">
                   <div>
                     IN DETAIL: <a
-                      href={rows.timelineEvent.url}
+                      href={row.timelineEvent.url}
                       target="_blank"
                       rel="noopener noreferrer">Read More</a
                     >
                   </div>
-                  {#if rows.timelineEvent.content}
+                  {#if row.timelineEvent.content}
                     <br />
-                    <div>{rows.timelineEvent.content}</div>
+                    <div>{row.timelineEvent.content}</div>
                     <br />
                   {/if}
-                  {#if rows.timelineEvent.sources && rows.timelineEvent.sources.length > 0}
+                  {#if row.timelineEvent.sources && row.timelineEvent.sources.length > 0}
                     <div class="link">
-                      {#if rows.timelineEvent.sources && rows.timelineEvent.sources.length > 0}
+                      {#if row.timelineEvent.sources && row.timelineEvent.sources.length > 0}
                         SOURCE(S):
-                        {#each rows.timelineEvent.sources as source, index (source)}
+                        {#each row.timelineEvent.sources as source, index (source)}
                           {#if source[1]}
                             <!-- Check if source name is present -->
                             {#if source[0]}
@@ -263,13 +328,13 @@
                                 rel="noopener noreferrer"
                               >
                                 {source[1]}{index <
-                                rows.timelineEvent.sources.length - 1
+                                row.timelineEvent.sources.length - 1
                                   ? ","
                                   : ""}
                               </a>
                             {:else}
                               {source[1]}{index <
-                              rows.timelineEvent.sources.length - 1
+                              row.timelineEvent.sources.length - 1
                                 ? ", "
                                 : ""}
                             {/if}

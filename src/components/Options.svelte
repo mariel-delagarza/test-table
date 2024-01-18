@@ -17,6 +17,11 @@
 
   const optionIdentifier = "value"
   const labelIdentifier = "label"
+  let filterCategory = dataset.filterCategory
+  let filterValue = dataset.filterValue
+
+  console.log("filterCategory", filterCategory)
+  console.log("filterValue", filterValue)
 
   function removeRowActiveTitleStyle() {
     const title = document.querySelectorAll(".title--active")
@@ -117,30 +122,59 @@
 
   $: chevron = isListOpen ? chevronUp : chevronDown
 
-  // Pagination state
-  export let currentPage = 1
-  const itemsPerPage = 100
-  let totalEntries = filteredData.length
-  let totalPages = Math.ceil(totalEntries / itemsPerPage)
+  // // Pagination state
+  // export let currentPage = 1
+  // const itemsPerPage = 100
+  // let totalEntries = filteredData.length
+  // let totalPages = Math.ceil(totalEntries / itemsPerPage)
 
-  $: if (currentPage) {
-  console.log(`Current page is now: ${currentPage}`);
-}
+  // $: if (currentPage) {
+  // console.log(`Current page is now: ${currentPage}`);
+// }
+function handleScrollLeft() {
+    const tableContainer = document.getElementById("table-body")
+    const btnIconLeft = document.querySelector("#icon-scroll-left")
+    const btnIconRight = document.querySelector("#icon-scroll-right")
 
+    tableContainer.scrollLeft -= 100
+    if (btnIconRight.classList.contains("inactive")) {
+      btnIconRight.classList.remove("inactive")
+    }
+    if (tableContainer.scrollLeft === 0) {
+      btnIconLeft.classList.add("inactive")
+    }
+  }
+
+  function handleScrollRight() {
+    const tableContainer = document.getElementById("table-body")
+    const table = document.getElementsByClassName("table")[0]
+    const btnIconLeft = document.querySelector("#icon-scroll-left")
+    const btnIconRight = document.querySelector("#icon-scroll-right")
+    tableContainer.scrollLeft += 100
+    if (btnIconLeft.classList.contains("inactive")) {
+      btnIconLeft.classList.remove("inactive")
+    }
+    if (
+      Math.ceil(tableContainer.scrollLeft) + tableContainer.offsetWidth >=
+      table.offsetWidth
+    ) {
+      btnIconRight.classList.add("inactive")
+    }
+  }
 
   // Handle clicking the pagination buttons
-  function goToNextPage() {
-    if (currentPage < totalPages) currentPage++
-  }
+  // function goToNextPage() {
+  //   if (currentPage < totalPages) currentPage++
+  // }
 
-  function goToPreviousPage() {
-    if (currentPage > 1) currentPage--
-  }
+  // function goToPreviousPage() {
+  //   if (currentPage > 1) currentPage--
+  // }
 
-  // Calculate the range of entries being shown
-  $: startEntry = (currentPage - 1) * itemsPerPage + 1
-  $: endEntry = startEntry + itemsPerPage - 1
-  if (endEntry > totalEntries) endEntry = totalEntries
+  // // Calculate the range of entries being shown
+  // $: startEntry = (currentPage - 1) * itemsPerPage + 1
+  // $: endEntry = startEntry + itemsPerPage - 1
+  // if (endEntry > totalEntries) endEntry = totalEntries
 
   onMount(() => {
     isListOpen = false
@@ -173,50 +207,59 @@
 </script>
 
 <!-- dropdown filters -->
-
 <div class="selects">
-  <!--Type-->
-  <div class="select-container">
-    <div class="label">Sector</div>
-    <Select
-      indicatorSvg={chevron}
-      showChevron={true}
-      {optionIdentifier}
-      {labelIdentifier}
-      items={dataset.sectors}
-      placeholder="Select a sector"
-      on:select={(event) => handleSelect(event, "Sector")}
-      on:clear={(event) => handleClear("Sector")}
-    />
-  </div>
-  <div class="select-container">
-    <div class="label">Subsector</div>
-    <Select
-      indicatorSvg={chevron}
-      showChevron={true}
-      {optionIdentifier}
-      {labelIdentifier}
-      items={dataset.subsectors}
-      placeholder="Select a type"
-      on:select={(event) => handleSelect(event, "Subsector")}
-      on:clear={(event) => handleClear("Subsector")}
-    />
-  </div>
-  <!--Month-->
-  <div class="select-container">
-    <div class="label">State</div>
-    <Select
-      indicatorSvg={chevron}
-      showChevron={true}
-      {optionIdentifier}
-      {labelIdentifier}
-      items={dataset.states}
-      placeholder="Select a state"
-      on:select={(event) => handleSelect(event, "State")}
-      on:clear={() => handleClear("State")}
-    />
-  </div>
-  <!-- Year-->
+  {#if filterCategory == 'states' || filterCategory == 'sectors' && !filterValue}
+    <!-- Sector dropdown only if it's not a specific state page -->
+    <div class="select-container">
+      <div class="label">Sector</div>
+      <Select
+        indicatorSvg={chevron}
+        showChevron={true}
+        {optionIdentifier}
+        {labelIdentifier}
+        items={dataset.sectors}
+        placeholder="Select a sector"
+        on:select={(event) => handleSelect(event, "Sector")}
+        on:clear={(event) => handleClear("Sector")}
+      />
+    </div>
+  {/if}
+  
+  {#if filterCategory == 'sectors' && filterValue || filterCategory === 'analysis'}
+    <!-- Subsector dropdown for sectors or analysis category -->
+    <div class="select-container">
+      <div class="label">Subsector</div>
+      <Select
+        indicatorSvg={chevron}
+        showChevron={true}
+        {optionIdentifier}
+        {labelIdentifier}
+        items={dataset.subsectors}
+        placeholder="Select a subsector"
+        on:select={(event) => handleSelect(event, "Subsector")}
+        on:clear={(event) => handleClear("Subsector")}
+      />
+    </div>
+  {/if}
+  
+  {#if filterCategory !== 'states'}
+    <!-- State dropdown for any category except when it's a general states page without a specific state -->
+    <div class="select-container">
+      <div class="label">State</div>
+      <Select
+        indicatorSvg={chevron}
+        showChevron={true}
+        {optionIdentifier}
+        {labelIdentifier}
+        items={dataset.states}
+        placeholder="Select a state"
+        on:select={(event) => handleSelect(event, "State")}
+        on:clear={() => handleClear("State")}
+      />
+    </div>
+  {/if}
+
+  <!-- Resource Type dropdown is always rendered -->
   <div class="select-container">
     <div class="label">Resource Type</div>
     <Select
@@ -233,18 +276,19 @@
 </div>
 
 <!--"Showing ### Entries" + left/right buttons-->
+<!--"Showing ### Entries" + left/right buttons-->
 <div class="options options__container options__container--sticky">
   <section class="options__navigation">
     <Search bind:searchText />
     <div class="options__navigation-inner">
       <span class="options__table-total-entries"
-        >Showing {startEntry}-{endEntry} of {totalEntries} entries</span
+        >Showing {totalEntries} {totalEntries > 1 ? "entries" : "entry"}</span
       >
       <button
         id="btn-scroll-left"
         class="btn btn--scroll btn--scroll--left inactive"
         aria-label="Scroll table to the left"
-        on:click={goToPreviousPage}
+        on:click={handleScrollLeft}
         ><Icon
           id="icon-scroll-left"
           name="Icon-left"
@@ -255,7 +299,7 @@
         id="btn-scroll-right"
         class="btn btn--scroll btn--scroll--right"
         aria-label="Scroll table to the right"
-        on:click={goToNextPage}
+        on:click={handleScrollRight}
         ><Icon id="icon-scroll-right" name="Icon-right" class="icon" /></button
       >
     </div>
